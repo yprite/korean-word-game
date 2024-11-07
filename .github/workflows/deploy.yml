@@ -1,9 +1,8 @@
-name: Deploy to S3
+name: Deploy to S3 on Release
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]  # Only trigger deployment when a new release is published
 
 jobs:
   deploy:
@@ -28,4 +27,4 @@ jobs:
 
       - name: Sync S3 Bucket
         run: |
-          aws s3 sync . s3://korean-word-game --exclude ".git/*" --delete
+          aws s3 sync . s3://YOUR_BUCKET_NAME --exclude ".git/*" --delete
