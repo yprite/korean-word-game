@@ -6,8 +6,6 @@ Welcome to the **Korean Syllable Matching Game**! This is an educational web-bas
 
 In this game, you’ll be shown a random Korean syllable, and your goal is to select the correct pronunciation from three options. The game is timed, and you can set your preferred time and total number of questions at the start.
 
-![Game Screenshot](./images/screenshot.png)
-
 > **Note**: The game is hosted on Amazon S3 and supports integration with Google AdSense for ads.
 
 ## 📖 How to Play
