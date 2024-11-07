@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Match Korean Syllables</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            /* Add some margin if needed */
+        }
+
+        .start-button,
+        .restart-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .start-button:hover,
+        .restart-button:hover {
+            background-color: #45a049;
+        }
+
+        .game-area,
+        .restart-button,
+        .scoreboard,
+        .feedback {
+            display: none;
+            margin-top: 20px;
+            /* Adds space between feedback and options */
+        }
+
+        .visible {
+            display: block;
+        }
+
+        .korean-syllable {
+            font-size: 5em;
+            margin: 20px;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .option {
+            padding: 10px 20px;
+            background-color: #e8e8e8;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .option:hover {
+            background-color: #d3ffd3;
+        }
+
+        .settings {
+            margin-bottom: 20px;
+        }
+
+        .settings input {
+            margin: 5px;
+            padding: 5px;
+        }
+
+        .ad-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            Match Korean Syllables
+        </div>
+
+        <div class="settings">
+            <label for="time-setting">Set Time (in seconds): </label>
+            <input type="number" id="time-setting" value="30" min="10" max="300">
+            <br>
+            <label for="total-questions-setting">Set Total Questions: </label>
+            <input type="number" id="total-questions-setting" value="10" min="1" max="50">
+        </div>
+
+        <div class="button-container">
+            <button class="start-button" onclick="startGame()">Start</button>
+
+            <button class="restart-button" onclick="restartGame()">Return to Start</button>
+        </div>
+        <div class="scoreboard">
+            <div id="timer">Time: 30</div>
+            <div>Total Questions: <span id="total-questions">0</span></div>
+            <div>Correct Answers: <span id="correct-answers">0</span></div>
+        </div>
+
+        <div class="game-area">
+            <div class="korean-syllable" id="korean-syllable">
+                가
+            </div>
+            <div class="options">
+                <div class="option" onclick="checkAnswer('ka')">ka</div>
+                <div class="option" onclick="checkAnswer('na')">na</div>
+                <div class="option" onclick="checkAnswer('da')">da</div>
+            </div>
+        </div>
+
+        <div class="feedback" id="feedback">
+            Select the correct pronunciation.
+        </div>
+    </div>
+
+    <div class="ad-container">
+        <!-- Google AdSense Ad Code -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXX" data-ad-slot="YYYYYYYYY"
+            data-ad-format="auto"></ins>
+        <!-- Replace with your own AdSense publisher ID -->
+        <!-- Replace with your own Ad unit ID -->
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+    <script>
+        const syllables = [
+            // Basic consonants and vowels combinations
+            { korean: "가", correct: "ka", options: ["ka", "na", "pa"] },
+            { korean: "나", correct: "na", options: ["na", "ta", "ma"] },
+            { korean: "다", correct: "da", options: ["da", "ra", "ja"] },
+            { korean: "라", correct: "ra", options: ["ra", "ma", "sa"] },
+            { korean: "마", correct: "ma", options: ["ma", "pa", "ga"] },
+            { korean: "바", correct: "ba", options: ["ba", "da", "sa"] },
+            { korean: "사", correct: "sa", options: ["sa", "ka", "na"] },
+            { korean: "아", correct: "a", options: ["a", "o", "e"] },
+            { korean: "자", correct: "ja", options: ["ja", "ra", "cha"] },
+            { korean: "차", correct: "cha", options: ["cha", "ja", "ta"] },
+            { korean: "카", correct: "ka", options: ["ka", "pa", "ha"] },
+            { korean: "타", correct: "ta", options: ["ta", "ra", "sa"] },
+            { korean: "파", correct: "pa", options: ["pa", "ma", "ga"] },
+            { korean: "하", correct: "ha", options: ["ha", "ka", "ra"] },
+
+            // Double consonants (쌍자음) and other vowel combinations
+            { korean: "까", correct: "kka", options: ["kka", "ka", "ta"] },
+            { korean: "따", correct: "tta", options: ["tta", "ta", "pa"] },
+            { korean: "빠", correct: "ppa", options: ["ppa", "pa", "ma"] },
+            { korean: "싸", correct: "ssa", options: ["ssa", "sa", "na"] },
+            { korean: "짜", correct: "jja", options: ["jja", "ja", "cha"] },
+
+            // Combination with different vowels
+            { korean: "고", correct: "ko", options: ["ko", "go", "do"] },
+            { korean: "노", correct: "no", options: ["no", "ro", "bo"] },
+            { korean: "도", correct: "do", options: ["do", "to", "lo"] },
+            { korean: "로", correct: "ro", options: ["ro", "mo", "go"] },
+            { korean: "모", correct: "mo", options: ["mo", "bo", "ko"] },
+            { korean: "보", correct: "bo", options: ["bo", "po", "do"] },
+            { korean: "소", correct: "so", options: ["so", "ro", "jo"] },
+            { korean: "오", correct: "o", options: ["o", "a", "e"] },
+            { korean: "조", correct: "jo", options: ["jo", "go", "ho"] },
+            { korean: "초", correct: "cho", options: ["cho", "so", "ro"] },
+            { korean: "코", correct: "ko", options: ["ko", "ho", "no"] },
+            { korean: "토", correct: "to", options: ["to", "ro", "po"] },
+            { korean: "포", correct: "po", options: ["po", "mo", "do"] },
+            { korean: "호", correct: "ho", options: ["ho", "ko", "ro"] },
+
+            // Mixed vowel and consonant sounds
+            { korean: "기", correct: "gi", options: ["gi", "ki", "hi"] },
+            { korean: "니", correct: "ni", options: ["ni", "ri", "si"] },
+            { korean: "디", correct: "di", options: ["di", "ti", "mi"] },
+            { korean: "리", correct: "ri", options: ["ri", "bi", "si"] },
+            { korean: "미", correct: "mi", options: ["mi", "pi", "li"] },
+            { korean: "비", correct: "bi", options: ["bi", "gi", "ji"] },
+            { korean: "시", correct: "shi", options: ["shi", "chi", "ji"] },
+            { korean: "이", correct: "i", options: ["i", "e", "a"] },
+            { korean: "지", correct: "ji", options: ["ji", "ri", "shi"] },
+            { korean: "치", correct: "chi", options: ["chi", "shi", "ji"] },
+            { korean: "키", correct: "ki", options: ["ki", "gi", "hi"] },
+            { korean: "티", correct: "ti", options: ["ti", "di", "si"] },
+            { korean: "피", correct: "pi", options: ["pi", "mi", "bi"] },
+            { korean: "히", correct: "hi", options: ["hi", "ki", "gi"] }
+        ];
+
+        let score = 0;
+        let totalQuestions = 0;
+        let maxQuestions = 10; // Default value
+        let timeRemaining = 30; // Default value
+        let timer;
+
+        function getRandomSyllable() {
+            const randomIndex = Math.floor(Math.random() * syllables.length);
+            return syllables[randomIndex];
+        }
+
+        function loadNewSyllable() {
+            // Stop adding new questions once the limit is reached
+            if (totalQuestions >= maxQuestions) {
+                clearInterval(timer);
+                document.getElementById('timer').textContent = parseInt(document.getElementById('time-setting').value) - timeRemaining + " sec";
+                document.getElementById('feedback').textContent = 'Quiz Completed! Final score: ' + score;
+                document.querySelector('.game-area').classList.remove('visible');
+                document.querySelector('.restart-button').classList.add('visible');
+                return;
+            }
+
+            const selectedSyllable = getRandomSyllable();
+            document.getElementById('korean-syllable').textContent = selectedSyllable.korean;
+
+            const optionsDivs = document.querySelectorAll('.option');
+            optionsDivs.forEach((div, index) => {
+                div.textContent = selectedSyllable.options[index];
+                div.onclick = () => checkAnswer(selectedSyllable.options[index]);
+            });
+
+
+            totalQuestions++;
+            // Display the total number of questions instead of the current count
+            document.getElementById('total-questions').textContent = maxQuestions;
+            document.getElementById('feedback').textContent = 'Select the correct pronunciation.';
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentSyllable = document.getElementById('korean-syllable').textContent;
+            const correctAnswer = syllables.find(syllable => syllable.korean === currentSyllable).correct;
+
+            if (selectedOption === correctAnswer) {
+                score++;
+                document.getElementById('feedback').textContent = `Correct!`;
+            } else {
+                document.getElementById('feedback').textContent = `Wrong! The correct answer was ${correctAnswer}.`;
+            }
+
+            document.getElementById('correct-answers').textContent = score;
+
+            setTimeout(loadNewSyllable, 1000);
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                if (timeRemaining > 0) {
+                    timeRemaining--;
+                    document.getElementById('timer').textContent = `Time: ${timeRemaining}`;
+                } else {
+                    clearInterval(timer);
+                    document.getElementById('feedback').textContent = 'Time is up! Final score: ' + score;
+                    document.querySelector('.game-area').classList.remove('visible');
+                    document.querySelector('.restart-button').classList.add('visible');
+                }
+            }, 1000);
+        }
+
+        function startGame() {
+            score = 0;
+            totalQuestions = 0;
+            timeRemaining = parseInt(document.getElementById('time-setting').value);
+            maxQuestions = parseInt(document.getElementById('total-questions-setting').value);
+
+            // Display the total number of questions based on user input
+            document.getElementById('total-questions').textContent = maxQuestions;
+            document.getElementById('correct-answers').textContent = score;
+            document.getElementById('feedback').textContent = 'Select the correct pronunciation.';
+            document.getElementById('timer').textContent = `Time: ${timeRemaining}`;
+
+            document.querySelector('.start-button').style.display = 'none';
+            document.querySelector('.restart-button').classList.remove('visible');
+            document.querySelector('.settings').style.display = 'none';
+            document.querySelector('.scoreboard').classList.add('visible');
+            document.querySelector('.feedback').classList.add('visible');
+            document.querySelector('.game-area').classList.add('visible');
+
+            loadNewSyllable();
+            startTimer();
+        }
+
+        function restartGame() {
+            document.querySelector('.start-button').style.display = 'block';
+            document.querySelector('.settings').style.display = 'block';
+            document.querySelector('.restart-button').classList.remove('visible');
+            document.querySelector('.scoreboard').classList.remove('visible');
+            document.querySelector('.feedback').classList.remove('visible');
+            document.querySelector('.game-area').classList.remove('visible');
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('timer').textContent = 'Time: 30';
+            document.getElementById('total-questions').textContent = '0';
+            document.getElementById('correct-answers').textContent = '0';
+        }
+
+        window.onload = () => {
+            document.querySelector('.game-area').classList.remove('visible');
+        };
+    </script>
+</body>
+
+</html>

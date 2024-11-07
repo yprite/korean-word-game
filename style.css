@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.header {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+.start-button, .restart-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+.start-button:hover, .restart-button:hover {
+    background-color: #45a049;
+}
+.game-area, .restart-button, .scoreboard, .feedback {
+    display: none;
+}
+.visible {
+    display: block;
+}
+.korean-syllable {
+    font-size: 5em;
+    margin: 20px;
+}
+.options {
+    display: flex;
+    justify-content: space-around;
+}
+.option {
+    padding: 10px 20px;
+    background-color: #e8e8e8;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.option:hover {
+    background-color: #d3ffd3;
+}
+.settings {
+    margin-bottom: 20px;
+}
+.settings input {
+    margin: 5px;
+    padding: 5px;
+}
