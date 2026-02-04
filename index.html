@@ -1,324 +1,2321 @@
 <!DOCTYPE html>
-<html lang="ko">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Match Korean Syllables</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Korean Master - Learn Korean Pronunciation</title>
+    <meta name="description" content="Learn Korean pronunciation with interactive games. Perfect for beginners learning Hangul.">
+    <meta name="keywords" content="Korean, Hangul, Learn Korean, Korean pronunciation, Korean alphabet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #14b8a6;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Poppins', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-animation .circle:nth-child(1) { width: 400px; height: 400px; top: -100px; left: -100px; animation-delay: 0s; }
+        .bg-animation .circle:nth-child(2) { width: 300px; height: 300px; top: 50%; right: -50px; animation-delay: -5s; }
+        .bg-animation .circle:nth-child(3) { width: 200px; height: 200px; bottom: -50px; left: 30%; animation-delay: -10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* Container */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Language Selector */
+        .lang-selector {
+            position: absolute;
+            top: 20px;
+            right: 0;
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 8px;
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--glass-border);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item {
             text-align: center;
         }
 
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
         }
 
-        .header {
-            font-size: 2em;
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Level Progress */
+        .level-progress {
             margin-bottom: 20px;
         }
 
-        .button-container {
+        .level-info {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .level-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .level-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--warning), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            margin-top: 20px;
-            /* Add some margin if needed */
+            font-weight: 700;
+            font-size: 0.9rem;
         }
 
-        .start-button,
-        .restart-button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
+        .level-text {
+            font-weight: 600;
         }
 
-        .start-button:hover,
-        .restart-button:hover {
-            background-color: #45a049;
+        .xp-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
 
-        .game-area,
-        .restart-button,
-        .scoreboard,
-        .feedback {
+        .progress-bar {
+            height: 8px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        /* Screen transitions */
+        .screen {
             display: none;
-            margin-top: 20px;
-            /* Adds space between feedback and options */
+            animation: fadeIn 0.4s ease;
         }
 
-        .visible {
+        .screen.active {
             display: block;
         }
 
-        .korean-syllable {
-            font-size: 5em;
-            margin: 20px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .options {
-            display: flex;
-            justify-content: space-around;
+        /* Home Screen */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
         }
 
-        .option {
-            padding: 10px 20px;
-            background-color: #e8e8e8;
-            border: 2px solid #ccc;
-            border-radius: 5px;
+        .menu-item {
+            background: linear-gradient(135deg, var(--glass-bg), transparent);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .option:hover {
-            background-color: #d3ffd3;
+        .menu-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
         }
 
-        .settings {
+        .menu-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .menu-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .menu-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Difficulty Selection */
+        .difficulty-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .difficulty-btn {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .difficulty-btn:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .difficulty-btn.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .diff-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .diff-beginner { background: linear-gradient(135deg, #22c55e, #14b8a6); }
+        .diff-intermediate { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+        .diff-advanced { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+
+        .diff-info h3 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .diff-info p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Game Screen */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        .settings input {
-            margin: 5px;
-            padding: 5px;
+        .back-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
         }
 
-        .ad-container {
-            margin: 20px auto;
+        .back-btn:hover {
+            background: var(--primary);
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .game-stat {
             text-align: center;
+        }
+
+        .game-stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .game-stat-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Timer */
+        .timer-container {
+            margin-bottom: 20px;
+        }
+
+        .timer-bar {
+            height: 6px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+            transition: width 0.3s linear;
+        }
+
+        /* Combo Display */
+        .combo-display {
+            text-align: center;
+            margin-bottom: 15px;
+            min-height: 30px;
+        }
+
+        .combo-text {
+            display: inline-block;
+            padding: 5px 20px;
+            background: linear-gradient(135deg, var(--warning), var(--secondary));
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Question Card */
+        .question-card {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.1));
+            border-radius: 24px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .korean-char {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .hint-text {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .sound-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .sound-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 20px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, var(--success), #14b8a6);
+            border-color: var(--success);
+            animation: correctPulse 0.5s ease;
+        }
+
+        .option-btn.wrong {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border-color: var(--danger);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Feedback */
+        .feedback-container {
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            min-height: 50px;
+        }
+
+        .feedback-text {
+            font-weight: 600;
+        }
+
+        .feedback-correct {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .feedback-wrong {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* Results Screen */
+        .results-card {
+            text-align: center;
+        }
+
+        .results-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .results-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .result-stat {
+            background: var(--glass-bg);
+            padding: 20px 10px;
+            border-radius: 16px;
+        }
+
+        .result-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .result-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .xp-earned {
+            background: linear-gradient(135deg, var(--warning), var(--secondary));
+            padding: 15px 30px;
+            border-radius: 30px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            animation: pulse 1s infinite;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-border);
+        }
+
+        /* Tutorial Screen */
+        .tutorial-content {
+            text-align: center;
+        }
+
+        .tutorial-slide {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tutorial-slide.active {
+            display: block;
+        }
+
+        .tutorial-image {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .tutorial-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .hangul-example {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .hangul-box {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .dots-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--glass-border);
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: var(--primary);
+            width: 30px;
+            border-radius: 5px;
+        }
+
+        /* Settings */
+        .settings-group {
+            margin-bottom: 25px;
+        }
+
+        .settings-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .settings-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .settings-option {
+            flex: 1;
+            padding: 12px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .settings-option.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--glass-bg);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s;
+        }
+
+        .toggle.active::after {
+            left: 25px;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .achievement {
+            text-align: center;
+            padding: 20px 10px;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+
+        .achievement.unlocked {
+            opacity: 1;
+            border-color: var(--warning);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .achievement-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .toast.achievement {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        /* Particles */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            animation: particleFade 1s ease forwards;
+        }
+
+        @keyframes particleFade {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .korean-char {
+                font-size: 4.5rem;
+            }
+
+            .options-grid {
+                gap: 8px;
+            }
+
+            .option-btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="header">
-            Match Korean Syllables
-        </div>
+    <div class="bg-animation">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
 
-        <div class="settings">
-            <label for="time-setting">Set Time (in seconds): </label>
-            <input type="number" id="time-setting" value="30" min="10" max="300">
-            <br>
-            <label for="total-questions-setting">Set Total Questions: </label>
-            <input type="number" id="total-questions-setting" value="10" min="1" max="50">
-        </div>
-
-        <div class="button-container">
-            <button class="start-button" onclick="startGame()">Start</button>
-
-            <button class="restart-button" onclick="restartGame()">Return to Start</button>
-        </div>
-        <div class="scoreboard">
-            <div id="timer">Time: 30</div>
-            <div>Total Questions: <span id="total-questions">0</span></div>
-            <div>Correct Answers: <span id="correct-answers">0</span></div>
-        </div>
-
-        <div class="game-area">
-            <div class="korean-syllable" id="korean-syllable">
-                가
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">Korean Master</div>
+            <p class="tagline" data-i18n="tagline">Master Korean Pronunciation</p>
+            <div class="lang-selector">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="ja">日本語</button>
+                <button class="lang-btn" data-lang="zh">中文</button>
             </div>
-            <div class="options">
-                <div class="option" onclick="checkAnswer('ka')">ka</div>
-                <div class="option" onclick="checkAnswer('na')">na</div>
-                <div class="option" onclick="checkAnswer('da')">da</div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="total-score">0</div>
+                <div class="stat-label" data-i18n="totalScore">Total Score</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="best-streak">0</div>
+                <div class="stat-label" data-i18n="bestStreak">Best Streak</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="games-played">0</div>
+                <div class="stat-label" data-i18n="gamesPlayed">Games</div>
             </div>
         </div>
 
-        <div class="feedback" id="feedback">
-            Select the correct pronunciation.
+        <!-- Level Progress -->
+        <div class="level-progress">
+            <div class="level-info">
+                <div class="level-badge">
+                    <div class="level-icon" id="level-number">1</div>
+                    <span class="level-text" data-i18n="level">Level</span>
+                </div>
+                <span class="xp-text"><span id="current-xp">0</span> / <span id="needed-xp">100</span> XP</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="xp-progress" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div class="screen active" id="home-screen">
+            <div class="glass-card">
+                <h2 style="text-align: center; margin-bottom: 5px;" data-i18n="selectMode">Select Mode</h2>
+                <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="chooseLearning">Choose what you want to learn</p>
+
+                <div class="menu-grid">
+                    <div class="menu-item" data-mode="consonants">
+                        <div class="menu-icon">🔤</div>
+                        <div class="menu-title" data-i18n="consonants">Consonants</div>
+                        <div class="menu-desc" data-i18n="consonantsDesc">Learn ㄱ, ㄴ, ㄷ...</div>
+                    </div>
+                    <div class="menu-item" data-mode="vowels">
+                        <div class="menu-icon">🔡</div>
+                        <div class="menu-title" data-i18n="vowels">Vowels</div>
+                        <div class="menu-desc" data-i18n="vowelsDesc">Learn ㅏ, ㅓ, ㅗ...</div>
+                    </div>
+                    <div class="menu-item" data-mode="syllables">
+                        <div class="menu-icon">🎯</div>
+                        <div class="menu-title" data-i18n="syllables">Syllables</div>
+                        <div class="menu-desc" data-i18n="syllablesDesc">Learn 가, 나, 다...</div>
+                    </div>
+                    <div class="menu-item" data-mode="words">
+                        <div class="menu-icon">📚</div>
+                        <div class="menu-title" data-i18n="words">Words</div>
+                        <div class="menu-desc" data-i18n="wordsDesc">Learn basic words</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between;">
+                    <button class="btn btn-secondary" style="width: 48%;" onclick="showScreen('tutorial-screen')" data-i18n="tutorial">📖 Tutorial</button>
+                    <button class="btn btn-secondary" style="width: 48%;" onclick="showScreen('settings-screen')" data-i18n="settings">⚙️ Settings</button>
+                </div>
+                <button class="btn btn-secondary" style="margin-top: 10px;" onclick="showScreen('achievements-screen')" data-i18n="achievements">🏆 Achievements</button>
+            </div>
+        </div>
+
+        <!-- Difficulty Screen -->
+        <div class="screen" id="difficulty-screen">
+            <div class="glass-card">
+                <h2 style="text-align: center; margin-bottom: 20px;" data-i18n="selectDifficulty">Select Difficulty</h2>
+
+                <div class="difficulty-options">
+                    <div class="difficulty-btn" data-difficulty="beginner">
+                        <div class="diff-icon diff-beginner">🌱</div>
+                        <div class="diff-info">
+                            <h3 data-i18n="beginner">Beginner</h3>
+                            <p data-i18n="beginnerDesc">Basic characters, more time</p>
+                        </div>
+                    </div>
+                    <div class="difficulty-btn" data-difficulty="intermediate">
+                        <div class="diff-icon diff-intermediate">🔥</div>
+                        <div class="diff-info">
+                            <h3 data-i18n="intermediate">Intermediate</h3>
+                            <p data-i18n="intermediateDesc">More variety, standard time</p>
+                        </div>
+                    </div>
+                    <div class="difficulty-btn" data-difficulty="advanced">
+                        <div class="diff-icon diff-advanced">⚡</div>
+                        <div class="diff-info">
+                            <h3 data-i18n="advanced">Advanced</h3>
+                            <p data-i18n="advancedDesc">All characters, fast pace</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" style="margin-top: 20px;" onclick="showScreen('home-screen')" data-i18n="back">← Back</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="screen" id="game-screen">
+            <div class="game-header">
+                <button class="back-btn" onclick="confirmQuit()" data-i18n="quit">✕ Quit</button>
+                <div class="game-stats">
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="game-score">0</div>
+                        <div class="game-stat-label" data-i18n="score">Score</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="game-question">1/10</div>
+                        <div class="game-stat-label" data-i18n="question">Question</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timer-container">
+                <div class="timer-bar">
+                    <div class="timer-fill" id="timer-fill" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <div class="combo-display">
+                <span class="combo-text" id="combo-display" style="display: none;">🔥 2x Combo!</span>
+            </div>
+
+            <div class="question-card">
+                <button class="sound-btn" onclick="playSound()" title="Listen">🔊</button>
+                <div class="question-label" data-i18n="whatSound">What sound does this make?</div>
+                <div class="korean-char" id="korean-display">가</div>
+                <div class="hint-text" id="hint-text"></div>
+            </div>
+
+            <div class="options-grid" id="options-container">
+                <button class="option-btn">ga</button>
+                <button class="option-btn">na</button>
+                <button class="option-btn">da</button>
+                <button class="option-btn">ra</button>
+            </div>
+
+            <div class="feedback-container" id="feedback-container">
+                <span class="feedback-text" id="feedback-text"></span>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="results-screen">
+            <div class="glass-card results-card">
+                <div class="results-icon" id="results-icon">🎉</div>
+                <h2 class="results-title" id="results-title" data-i18n="greatJob">Great Job!</h2>
+                <p class="results-subtitle" id="results-subtitle" data-i18n="quizComplete">Quiz Complete!</p>
+
+                <div class="results-stats">
+                    <div class="result-stat">
+                        <div class="result-stat-value" id="result-score">8</div>
+                        <div class="result-stat-label" data-i18n="correct">Correct</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value" id="result-accuracy">80%</div>
+                        <div class="result-stat-label" data-i18n="accuracy">Accuracy</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value" id="result-streak">5</div>
+                        <div class="result-stat-label" data-i18n="maxStreak">Max Streak</div>
+                    </div>
+                </div>
+
+                <div class="xp-earned" id="xp-earned">+50 XP</div>
+
+                <button class="btn btn-primary" onclick="playAgain()" data-i18n="playAgain">Play Again</button>
+                <button class="btn btn-secondary" onclick="showScreen('home-screen')" data-i18n="backToMenu">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Tutorial Screen -->
+        <div class="screen" id="tutorial-screen">
+            <div class="glass-card tutorial-content">
+                <div class="tutorial-slide active" data-slide="0">
+                    <div class="tutorial-image">🇰🇷</div>
+                    <h2 class="tutorial-title" data-i18n="welcomeKorean">Welcome to Korean!</h2>
+                    <p class="tutorial-text" data-i18n="tutorialIntro">Korean uses a unique alphabet called Hangul (한글). It was scientifically designed to be easy to learn!</p>
+                </div>
+
+                <div class="tutorial-slide" data-slide="1">
+                    <div class="tutorial-image">🔤</div>
+                    <h2 class="tutorial-title" data-i18n="consonantsTitle">Consonants (자음)</h2>
+                    <div class="hangul-example">
+                        <div class="hangul-box">ㄱ</div>
+                        <div class="hangul-box">ㄴ</div>
+                        <div class="hangul-box">ㄷ</div>
+                    </div>
+                    <p class="tutorial-text" data-i18n="consonantsInfo">Korean has 14 basic consonants. ㄱ(g), ㄴ(n), ㄷ(d) are the most common ones!</p>
+                </div>
+
+                <div class="tutorial-slide" data-slide="2">
+                    <div class="tutorial-image">🔡</div>
+                    <h2 class="tutorial-title" data-i18n="vowelsTitle">Vowels (모음)</h2>
+                    <div class="hangul-example">
+                        <div class="hangul-box">ㅏ</div>
+                        <div class="hangul-box">ㅓ</div>
+                        <div class="hangul-box">ㅗ</div>
+                    </div>
+                    <p class="tutorial-text" data-i18n="vowelsInfo">Korean has 10 basic vowels. ㅏ(a), ㅓ(eo), ㅗ(o) are vertical and horizontal lines!</p>
+                </div>
+
+                <div class="tutorial-slide" data-slide="3">
+                    <div class="tutorial-image">✨</div>
+                    <h2 class="tutorial-title" data-i18n="syllablesTitle">Syllable Blocks</h2>
+                    <div class="hangul-example">
+                        <div class="hangul-box">가</div>
+                        <div class="hangul-box">나</div>
+                        <div class="hangul-box">다</div>
+                    </div>
+                    <p class="tutorial-text" data-i18n="syllablesInfo">Consonants and vowels combine to form syllable blocks. 가 = ㄱ + ㅏ (g + a = ga)!</p>
+                </div>
+
+                <div class="tutorial-slide" data-slide="4">
+                    <div class="tutorial-image">🎮</div>
+                    <h2 class="tutorial-title" data-i18n="readyPlay">Ready to Play?</h2>
+                    <p class="tutorial-text" data-i18n="tutorialEnd">Match Korean characters with their pronunciation. Earn XP, unlock achievements, and become a Korean Master!</p>
+                </div>
+
+                <div class="dots-indicator">
+                    <div class="dot active" data-dot="0"></div>
+                    <div class="dot" data-dot="1"></div>
+                    <div class="dot" data-dot="2"></div>
+                    <div class="dot" data-dot="3"></div>
+                    <div class="dot" data-dot="4"></div>
+                </div>
+
+                <button class="btn btn-primary" id="tutorial-next" data-i18n="next">Next →</button>
+                <button class="btn btn-secondary" onclick="showScreen('home-screen')" data-i18n="skip">Skip</button>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div class="screen" id="settings-screen">
+            <div class="glass-card">
+                <h2 style="text-align: center; margin-bottom: 25px;" data-i18n="settingsTitle">⚙️ Settings</h2>
+
+                <div class="settings-group">
+                    <label class="settings-label" data-i18n="questionsPerGame">Questions per Game</label>
+                    <div class="settings-options" id="questions-setting">
+                        <div class="settings-option" data-value="5">5</div>
+                        <div class="settings-option active" data-value="10">10</div>
+                        <div class="settings-option" data-value="15">15</div>
+                        <div class="settings-option" data-value="20">20</div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <label class="settings-label" data-i18n="timePerQuestion">Time per Question</label>
+                    <div class="settings-options" id="time-setting">
+                        <div class="settings-option" data-value="5">5s</div>
+                        <div class="settings-option active" data-value="10">10s</div>
+                        <div class="settings-option" data-value="15">15s</div>
+                        <div class="settings-option" data-value="0">∞</div>
+                    </div>
+                </div>
+
+                <div class="toggle-container">
+                    <span data-i18n="soundEffects">Sound Effects</span>
+                    <div class="toggle active" id="toggle-sound"></div>
+                </div>
+
+                <div class="toggle-container">
+                    <span data-i18n="showHints">Show Hints</span>
+                    <div class="toggle active" id="toggle-hints"></div>
+                </div>
+
+                <div class="toggle-container">
+                    <span data-i18n="autoPlay">Auto-play Pronunciation</span>
+                    <div class="toggle" id="toggle-autoplay"></div>
+                </div>
+
+                <button class="btn btn-primary" style="margin-top: 25px;" onclick="saveSettings(); showScreen('home-screen')" data-i18n="saveSettings">Save Settings</button>
+                <button class="btn btn-secondary" onclick="showScreen('home-screen')" data-i18n="cancel">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Achievements Screen -->
+        <div class="screen" id="achievements-screen">
+            <div class="glass-card">
+                <h2 style="text-align: center; margin-bottom: 25px;" data-i18n="achievementsTitle">🏆 Achievements</h2>
+
+                <div class="achievements-grid" id="achievements-grid">
+                    <div class="achievement" data-achievement="first-game">
+                        <div class="achievement-icon">🎮</div>
+                        <div class="achievement-name" data-i18n="achFirstGame">First Game</div>
+                    </div>
+                    <div class="achievement" data-achievement="perfect-10">
+                        <div class="achievement-icon">💯</div>
+                        <div class="achievement-name" data-i18n="achPerfect">Perfect 10</div>
+                    </div>
+                    <div class="achievement" data-achievement="streak-5">
+                        <div class="achievement-icon">🔥</div>
+                        <div class="achievement-name" data-i18n="achStreak5">5 Streak</div>
+                    </div>
+                    <div class="achievement" data-achievement="streak-10">
+                        <div class="achievement-icon">⚡</div>
+                        <div class="achievement-name" data-i18n="achStreak10">10 Streak</div>
+                    </div>
+                    <div class="achievement" data-achievement="level-5">
+                        <div class="achievement-icon">⭐</div>
+                        <div class="achievement-name" data-i18n="achLevel5">Level 5</div>
+                    </div>
+                    <div class="achievement" data-achievement="level-10">
+                        <div class="achievement-icon">🌟</div>
+                        <div class="achievement-name" data-i18n="achLevel10">Level 10</div>
+                    </div>
+                    <div class="achievement" data-achievement="games-10">
+                        <div class="achievement-icon">🎯</div>
+                        <div class="achievement-name" data-i18n="achGames10">10 Games</div>
+                    </div>
+                    <div class="achievement" data-achievement="games-50">
+                        <div class="achievement-icon">🏅</div>
+                        <div class="achievement-name" data-i18n="achGames50">50 Games</div>
+                    </div>
+                    <div class="achievement" data-achievement="master">
+                        <div class="achievement-icon">👑</div>
+                        <div class="achievement-name" data-i18n="achMaster">Master</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" style="margin-top: 25px;" onclick="showScreen('home-screen')" data-i18n="back">← Back</button>
+            </div>
         </div>
     </div>
 
-    <div class="ad-container">
-        <!-- Google AdSense Ad Code -->
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXX" data-ad-slot="YYYYYYYYY"
-            data-ad-format="auto"></ins>
-        <!-- Replace with your own AdSense publisher ID -->
-        <!-- Replace with your own Ad unit ID -->
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
     <script>
-        const syllables = [
-            // Basic consonants and vowels combinations
-            { korean: "가", correct: "ka", options: ["ka", "na", "pa"] },
-            { korean: "나", correct: "na", options: ["na", "ta", "ma"] },
-            { korean: "다", correct: "da", options: ["da", "ra", "ja"] },
-            { korean: "라", correct: "ra", options: ["ra", "ma", "sa"] },
-            { korean: "마", correct: "ma", options: ["ma", "pa", "ga"] },
-            { korean: "바", correct: "ba", options: ["ba", "da", "sa"] },
-            { korean: "사", correct: "sa", options: ["sa", "ka", "na"] },
-            { korean: "아", correct: "a", options: ["a", "o", "e"] },
-            { korean: "자", correct: "ja", options: ["ja", "ra", "cha"] },
-            { korean: "차", correct: "cha", options: ["cha", "ja", "ta"] },
-            { korean: "카", correct: "ka", options: ["ka", "pa", "ha"] },
-            { korean: "타", correct: "ta", options: ["ta", "ra", "sa"] },
-            { korean: "파", correct: "pa", options: ["pa", "ma", "ga"] },
-            { korean: "하", correct: "ha", options: ["ha", "ka", "ra"] },
+        // ============================================
+        // DATA - Korean Learning Content
+        // ============================================
+        const koreanData = {
+            consonants: [
+                { korean: "ㄱ", correct: "g/k", options: ["g/k", "n", "d/t", "r/l"], hint: "Like 'g' in 'go'" },
+                { korean: "ㄴ", correct: "n", options: ["n", "m", "r/l", "g/k"], hint: "Like 'n' in 'no'" },
+                { korean: "ㄷ", correct: "d/t", options: ["d/t", "g/k", "b/p", "j"], hint: "Like 'd' in 'do'" },
+                { korean: "ㄹ", correct: "r/l", options: ["r/l", "n", "m", "ng"], hint: "Between 'r' and 'l'" },
+                { korean: "ㅁ", correct: "m", options: ["m", "n", "b/p", "ng"], hint: "Like 'm' in 'mom'" },
+                { korean: "ㅂ", correct: "b/p", options: ["b/p", "m", "d/t", "g/k"], hint: "Like 'b' in 'boy'" },
+                { korean: "ㅅ", correct: "s", options: ["s", "j", "ch", "h"], hint: "Like 's' in 'sun'" },
+                { korean: "ㅇ", correct: "ng/silent", options: ["ng/silent", "m", "n", "h"], hint: "Silent at start, 'ng' at end" },
+                { korean: "ㅈ", correct: "j", options: ["j", "ch", "s", "g/k"], hint: "Like 'j' in 'joy'" },
+                { korean: "ㅊ", correct: "ch", options: ["ch", "j", "s", "t"], hint: "Like 'ch' in 'cheese'" },
+                { korean: "ㅋ", correct: "k", options: ["k", "g/k", "t", "p"], hint: "Strong 'k' sound" },
+                { korean: "ㅌ", correct: "t", options: ["t", "d/t", "k", "p"], hint: "Strong 't' sound" },
+                { korean: "ㅍ", correct: "p", options: ["p", "b/p", "t", "k"], hint: "Strong 'p' sound" },
+                { korean: "ㅎ", correct: "h", options: ["h", "g/k", "s", "ng/silent"], hint: "Like 'h' in 'hi'" }
+            ],
+            vowels: [
+                { korean: "ㅏ", correct: "a", options: ["a", "eo", "o", "u"], hint: "Like 'a' in 'father'" },
+                { korean: "ㅓ", correct: "eo", options: ["eo", "a", "o", "u"], hint: "Like 'u' in 'sun'" },
+                { korean: "ㅗ", correct: "o", options: ["o", "u", "a", "eo"], hint: "Like 'o' in 'go'" },
+                { korean: "ㅜ", correct: "u", options: ["u", "o", "eu", "i"], hint: "Like 'oo' in 'moon'" },
+                { korean: "ㅡ", correct: "eu", options: ["eu", "u", "i", "o"], hint: "No English equivalent, keep lips flat" },
+                { korean: "ㅣ", correct: "i", options: ["i", "e", "eu", "u"], hint: "Like 'ee' in 'see'" },
+                { korean: "ㅐ", correct: "ae", options: ["ae", "e", "a", "eo"], hint: "Like 'a' in 'apple'" },
+                { korean: "ㅔ", correct: "e", options: ["e", "ae", "i", "eo"], hint: "Like 'e' in 'bed'" },
+                { korean: "ㅑ", correct: "ya", options: ["ya", "yeo", "yo", "a"], hint: "Like 'ya' in 'yard'" },
+                { korean: "ㅕ", correct: "yeo", options: ["yeo", "ya", "yo", "eo"], hint: "'y' + 'eo' sound" },
+                { korean: "ㅛ", correct: "yo", options: ["yo", "ya", "yeo", "o"], hint: "Like 'yo' in 'yoga'" },
+                { korean: "ㅠ", correct: "yu", options: ["yu", "yo", "u", "yeo"], hint: "Like 'you'" },
+                { korean: "ㅒ", correct: "yae", options: ["yae", "ye", "ya", "ae"], hint: "'y' + 'ae' sound" },
+                { korean: "ㅖ", correct: "ye", options: ["ye", "yae", "e", "yeo"], hint: "Like 'ye' in 'yes'" },
+                { korean: "ㅘ", correct: "wa", options: ["wa", "wo", "we", "a"], hint: "Like 'wa' in 'water'" },
+                { korean: "ㅙ", correct: "wae", options: ["wae", "we", "wa", "ae"], hint: "'w' + 'ae' sound" },
+                { korean: "ㅚ", correct: "oe", options: ["oe", "we", "wae", "o"], hint: "Like 'we' in 'wet'" },
+                { korean: "ㅝ", correct: "wo", options: ["wo", "wa", "we", "u"], hint: "'w' + 'eo' sound" },
+                { korean: "ㅞ", correct: "we", options: ["we", "wo", "wae", "e"], hint: "Like 'we' in 'wet'" },
+                { korean: "ㅟ", correct: "wi", options: ["wi", "we", "u", "i"], hint: "Like 'wee'" },
+                { korean: "ㅢ", correct: "ui", options: ["ui", "i", "eu", "wi"], hint: "'eu' + 'i' combined" }
+            ],
+            syllables: [
+                // Basic syllables with ㅏ
+                { korean: "가", correct: "ga", options: ["ga", "na", "da", "ra"], hint: "ㄱ + ㅏ" },
+                { korean: "나", correct: "na", options: ["na", "ma", "da", "ra"], hint: "ㄴ + ㅏ" },
+                { korean: "다", correct: "da", options: ["da", "ta", "ra", "ga"], hint: "ㄷ + ㅏ" },
+                { korean: "라", correct: "ra", options: ["ra", "la", "na", "ma"], hint: "ㄹ + ㅏ" },
+                { korean: "마", correct: "ma", options: ["ma", "na", "ba", "pa"], hint: "ㅁ + ㅏ" },
+                { korean: "바", correct: "ba", options: ["ba", "pa", "ma", "da"], hint: "ㅂ + ㅏ" },
+                { korean: "사", correct: "sa", options: ["sa", "ja", "cha", "ha"], hint: "ㅅ + ㅏ" },
+                { korean: "아", correct: "a", options: ["a", "o", "u", "i"], hint: "ㅇ + ㅏ" },
+                { korean: "자", correct: "ja", options: ["ja", "cha", "sa", "ha"], hint: "ㅈ + ㅏ" },
+                { korean: "차", correct: "cha", options: ["cha", "ja", "ta", "ka"], hint: "ㅊ + ㅏ" },
+                { korean: "카", correct: "ka", options: ["ka", "ga", "ta", "pa"], hint: "ㅋ + ㅏ" },
+                { korean: "타", correct: "ta", options: ["ta", "da", "ka", "pa"], hint: "ㅌ + ㅏ" },
+                { korean: "파", correct: "pa", options: ["pa", "ba", "ta", "ka"], hint: "ㅍ + ㅏ" },
+                { korean: "하", correct: "ha", options: ["ha", "ga", "ka", "sa"], hint: "ㅎ + ㅏ" },
 
-            // Double consonants (쌍자음) and other vowel combinations
-            { korean: "까", correct: "kka", options: ["kka", "ka", "ta"] },
-            { korean: "따", correct: "tta", options: ["tta", "ta", "pa"] },
-            { korean: "빠", correct: "ppa", options: ["ppa", "pa", "ma"] },
-            { korean: "싸", correct: "ssa", options: ["ssa", "sa", "na"] },
-            { korean: "짜", correct: "jja", options: ["jja", "ja", "cha"] },
+                // Double consonants
+                { korean: "까", correct: "kka", options: ["kka", "ka", "ga", "tta"], hint: "ㄲ + ㅏ (tense)" },
+                { korean: "따", correct: "tta", options: ["tta", "ta", "da", "kka"], hint: "ㄸ + ㅏ (tense)" },
+                { korean: "빠", correct: "ppa", options: ["ppa", "pa", "ba", "tta"], hint: "ㅃ + ㅏ (tense)" },
+                { korean: "싸", correct: "ssa", options: ["ssa", "sa", "ja", "ppa"], hint: "ㅆ + ㅏ (tense)" },
+                { korean: "짜", correct: "jja", options: ["jja", "ja", "cha", "ssa"], hint: "ㅉ + ㅏ (tense)" },
 
-            // Combination with different vowels
-            { korean: "고", correct: "ko", options: ["ko", "go", "do"] },
-            { korean: "노", correct: "no", options: ["no", "ro", "bo"] },
-            { korean: "도", correct: "do", options: ["do", "to", "lo"] },
-            { korean: "로", correct: "ro", options: ["ro", "mo", "go"] },
-            { korean: "모", correct: "mo", options: ["mo", "bo", "ko"] },
-            { korean: "보", correct: "bo", options: ["bo", "po", "do"] },
-            { korean: "소", correct: "so", options: ["so", "ro", "jo"] },
-            { korean: "오", correct: "o", options: ["o", "a", "e"] },
-            { korean: "조", correct: "jo", options: ["jo", "go", "ho"] },
-            { korean: "초", correct: "cho", options: ["cho", "so", "ro"] },
-            { korean: "코", correct: "ko", options: ["ko", "ho", "no"] },
-            { korean: "토", correct: "to", options: ["to", "ro", "po"] },
-            { korean: "포", correct: "po", options: ["po", "mo", "do"] },
-            { korean: "호", correct: "ho", options: ["ho", "ko", "ro"] },
+                // Syllables with ㅗ
+                { korean: "고", correct: "go", options: ["go", "no", "do", "ko"], hint: "ㄱ + ㅗ" },
+                { korean: "노", correct: "no", options: ["no", "mo", "go", "ro"], hint: "ㄴ + ㅗ" },
+                { korean: "도", correct: "do", options: ["do", "to", "go", "no"], hint: "ㄷ + ㅗ" },
+                { korean: "로", correct: "ro", options: ["ro", "lo", "no", "mo"], hint: "ㄹ + ㅗ" },
+                { korean: "모", correct: "mo", options: ["mo", "no", "bo", "po"], hint: "ㅁ + ㅗ" },
+                { korean: "보", correct: "bo", options: ["bo", "po", "mo", "do"], hint: "ㅂ + ㅗ" },
+                { korean: "소", correct: "so", options: ["so", "jo", "cho", "ho"], hint: "ㅅ + ㅗ" },
+                { korean: "오", correct: "o", options: ["o", "a", "u", "i"], hint: "ㅇ + ㅗ" },
+                { korean: "조", correct: "jo", options: ["jo", "cho", "so", "go"], hint: "ㅈ + ㅗ" },
+                { korean: "초", correct: "cho", options: ["cho", "jo", "so", "to"], hint: "ㅊ + ㅗ" },
+                { korean: "코", correct: "ko", options: ["ko", "go", "to", "ho"], hint: "ㅋ + ㅗ" },
+                { korean: "토", correct: "to", options: ["to", "do", "ko", "po"], hint: "ㅌ + ㅗ" },
+                { korean: "포", correct: "po", options: ["po", "bo", "to", "mo"], hint: "ㅍ + ㅗ" },
+                { korean: "호", correct: "ho", options: ["ho", "go", "ko", "so"], hint: "ㅎ + ㅗ" },
 
-            // Mixed vowel and consonant sounds
-            { korean: "기", correct: "gi", options: ["gi", "ki", "hi"] },
-            { korean: "니", correct: "ni", options: ["ni", "ri", "si"] },
-            { korean: "디", correct: "di", options: ["di", "ti", "mi"] },
-            { korean: "리", correct: "ri", options: ["ri", "bi", "si"] },
-            { korean: "미", correct: "mi", options: ["mi", "pi", "li"] },
-            { korean: "비", correct: "bi", options: ["bi", "gi", "ji"] },
-            { korean: "시", correct: "shi", options: ["shi", "chi", "ji"] },
-            { korean: "이", correct: "i", options: ["i", "e", "a"] },
-            { korean: "지", correct: "ji", options: ["ji", "ri", "shi"] },
-            { korean: "치", correct: "chi", options: ["chi", "shi", "ji"] },
-            { korean: "키", correct: "ki", options: ["ki", "gi", "hi"] },
-            { korean: "티", correct: "ti", options: ["ti", "di", "si"] },
-            { korean: "피", correct: "pi", options: ["pi", "mi", "bi"] },
-            { korean: "히", correct: "hi", options: ["hi", "ki", "gi"] }
-        ];
+                // Syllables with ㅜ
+                { korean: "구", correct: "gu", options: ["gu", "nu", "du", "ku"], hint: "ㄱ + ㅜ" },
+                { korean: "누", correct: "nu", options: ["nu", "mu", "gu", "ru"], hint: "ㄴ + ㅜ" },
+                { korean: "두", correct: "du", options: ["du", "tu", "gu", "nu"], hint: "ㄷ + ㅜ" },
+                { korean: "루", correct: "ru", options: ["ru", "lu", "nu", "mu"], hint: "ㄹ + ㅜ" },
+                { korean: "무", correct: "mu", options: ["mu", "nu", "bu", "pu"], hint: "ㅁ + ㅜ" },
+                { korean: "부", correct: "bu", options: ["bu", "pu", "mu", "du"], hint: "ㅂ + ㅜ" },
+                { korean: "수", correct: "su", options: ["su", "ju", "chu", "hu"], hint: "ㅅ + ㅜ" },
+                { korean: "우", correct: "u", options: ["u", "o", "a", "i"], hint: "ㅇ + ㅜ" },
+                { korean: "주", correct: "ju", options: ["ju", "chu", "su", "gu"], hint: "ㅈ + ㅜ" },
+                { korean: "추", correct: "chu", options: ["chu", "ju", "su", "tu"], hint: "ㅊ + ㅜ" },
+                { korean: "쿠", correct: "ku", options: ["ku", "gu", "tu", "hu"], hint: "ㅋ + ㅜ" },
+                { korean: "투", correct: "tu", options: ["tu", "du", "ku", "pu"], hint: "ㅌ + ㅜ" },
+                { korean: "푸", correct: "pu", options: ["pu", "bu", "tu", "mu"], hint: "ㅍ + ㅜ" },
+                { korean: "후", correct: "hu", options: ["hu", "gu", "ku", "su"], hint: "ㅎ + ㅜ" },
 
-        let score = 0;
-        let totalQuestions = 0;
-        let maxQuestions = 10; // Default value
-        let timeRemaining = 30; // Default value
-        let timer;
+                // Syllables with ㅣ
+                { korean: "기", correct: "gi", options: ["gi", "ni", "di", "ki"], hint: "ㄱ + ㅣ" },
+                { korean: "니", correct: "ni", options: ["ni", "mi", "gi", "ri"], hint: "ㄴ + ㅣ" },
+                { korean: "디", correct: "di", options: ["di", "ti", "gi", "ni"], hint: "ㄷ + ㅣ" },
+                { korean: "리", correct: "ri", options: ["ri", "li", "ni", "mi"], hint: "ㄹ + ㅣ" },
+                { korean: "미", correct: "mi", options: ["mi", "ni", "bi", "pi"], hint: "ㅁ + ㅣ" },
+                { korean: "비", correct: "bi", options: ["bi", "pi", "mi", "di"], hint: "ㅂ + ㅣ" },
+                { korean: "시", correct: "shi", options: ["shi", "ji", "chi", "hi"], hint: "ㅅ + ㅣ" },
+                { korean: "이", correct: "i", options: ["i", "e", "a", "u"], hint: "ㅇ + ㅣ" },
+                { korean: "지", correct: "ji", options: ["ji", "chi", "shi", "gi"], hint: "ㅈ + ㅣ" },
+                { korean: "치", correct: "chi", options: ["chi", "ji", "shi", "ti"], hint: "ㅊ + ㅣ" },
+                { korean: "키", correct: "ki", options: ["ki", "gi", "ti", "hi"], hint: "ㅋ + ㅣ" },
+                { korean: "티", correct: "ti", options: ["ti", "di", "ki", "pi"], hint: "ㅌ + ㅣ" },
+                { korean: "피", correct: "pi", options: ["pi", "bi", "ti", "mi"], hint: "ㅍ + ㅣ" },
+                { korean: "히", correct: "hi", options: ["hi", "gi", "ki", "shi"], hint: "ㅎ + ㅣ" },
 
-        function getRandomSyllable() {
-            const randomIndex = Math.floor(Math.random() * syllables.length);
-            return syllables[randomIndex];
+                // Syllables with ㅓ
+                { korean: "거", correct: "geo", options: ["geo", "neo", "deo", "keo"], hint: "ㄱ + ㅓ" },
+                { korean: "너", correct: "neo", options: ["neo", "meo", "geo", "reo"], hint: "ㄴ + ㅓ" },
+                { korean: "더", correct: "deo", options: ["deo", "teo", "geo", "neo"], hint: "ㄷ + ㅓ" },
+                { korean: "러", correct: "reo", options: ["reo", "leo", "neo", "meo"], hint: "ㄹ + ㅓ" },
+                { korean: "머", correct: "meo", options: ["meo", "neo", "beo", "peo"], hint: "ㅁ + ㅓ" },
+                { korean: "버", correct: "beo", options: ["beo", "peo", "meo", "deo"], hint: "ㅂ + ㅓ" },
+                { korean: "서", correct: "seo", options: ["seo", "jeo", "cheo", "heo"], hint: "ㅅ + ㅓ" },
+                { korean: "어", correct: "eo", options: ["eo", "a", "o", "u"], hint: "ㅇ + ㅓ" },
+                { korean: "저", correct: "jeo", options: ["jeo", "cheo", "seo", "geo"], hint: "ㅈ + ㅓ" },
+                { korean: "처", correct: "cheo", options: ["cheo", "jeo", "seo", "teo"], hint: "ㅊ + ㅓ" },
+                { korean: "커", correct: "keo", options: ["keo", "geo", "teo", "heo"], hint: "ㅋ + ㅓ" },
+                { korean: "터", correct: "teo", options: ["teo", "deo", "keo", "peo"], hint: "ㅌ + ㅓ" },
+                { korean: "퍼", correct: "peo", options: ["peo", "beo", "teo", "meo"], hint: "ㅍ + ㅓ" },
+                { korean: "허", correct: "heo", options: ["heo", "geo", "keo", "seo"], hint: "ㅎ + ㅓ" },
+
+                // Syllables with ㅡ
+                { korean: "그", correct: "geu", options: ["geu", "neu", "deu", "keu"], hint: "ㄱ + ㅡ" },
+                { korean: "느", correct: "neu", options: ["neu", "meu", "geu", "reu"], hint: "ㄴ + ㅡ" },
+                { korean: "드", correct: "deu", options: ["deu", "teu", "geu", "neu"], hint: "ㄷ + ㅡ" },
+                { korean: "르", correct: "reu", options: ["reu", "leu", "neu", "meu"], hint: "ㄹ + ㅡ" },
+                { korean: "므", correct: "meu", options: ["meu", "neu", "beu", "peu"], hint: "ㅁ + ㅡ" },
+                { korean: "브", correct: "beu", options: ["beu", "peu", "meu", "deu"], hint: "ㅂ + ㅡ" },
+                { korean: "스", correct: "seu", options: ["seu", "jeu", "cheu", "heu"], hint: "ㅅ + ㅡ" },
+                { korean: "으", correct: "eu", options: ["eu", "u", "i", "a"], hint: "ㅇ + ㅡ" },
+                { korean: "즈", correct: "jeu", options: ["jeu", "cheu", "seu", "geu"], hint: "ㅈ + ㅡ" },
+                { korean: "츠", correct: "cheu", options: ["cheu", "jeu", "seu", "teu"], hint: "ㅊ + ㅡ" },
+                { korean: "크", correct: "keu", options: ["keu", "geu", "teu", "heu"], hint: "ㅋ + ㅡ" },
+                { korean: "트", correct: "teu", options: ["teu", "deu", "keu", "peu"], hint: "ㅌ + ㅡ" },
+                { korean: "프", correct: "peu", options: ["peu", "beu", "teu", "meu"], hint: "ㅍ + ㅡ" },
+                { korean: "흐", correct: "heu", options: ["heu", "geu", "keu", "seu"], hint: "ㅎ + ㅡ" }
+            ],
+            words: [
+                // Greetings
+                { korean: "안녕", correct: "annyeong", options: ["annyeong", "anyong", "annyung", "anyeong"], hint: "Hello/Goodbye (casual)" },
+                { korean: "감사", correct: "gamsa", options: ["gamsa", "kamsa", "gamsah", "kamsha"], hint: "Thanks" },
+                { korean: "네", correct: "ne", options: ["ne", "de", "nae", "nei"], hint: "Yes" },
+                { korean: "아니", correct: "ani", options: ["ani", "anee", "ahni", "anne"], hint: "No" },
+
+                // Numbers
+                { korean: "하나", correct: "hana", options: ["hana", "hanna", "hannah", "hanah"], hint: "One (native)" },
+                { korean: "둘", correct: "dul", options: ["dul", "dool", "dul", "tool"], hint: "Two (native)" },
+                { korean: "셋", correct: "set", options: ["set", "sett", "seht", "saet"], hint: "Three (native)" },
+                { korean: "넷", correct: "net", options: ["net", "nett", "naet", "neht"], hint: "Four (native)" },
+                { korean: "다섯", correct: "daseot", options: ["daseot", "dasut", "daseut", "dasot"], hint: "Five (native)" },
+                { korean: "일", correct: "il", options: ["il", "eel", "ihl", "eol"], hint: "One (sino)" },
+                { korean: "이", correct: "i", options: ["i", "ee", "ih", "yi"], hint: "Two (sino)" },
+                { korean: "삼", correct: "sam", options: ["sam", "sahm", "saam", "salm"], hint: "Three (sino)" },
+
+                // Colors
+                { korean: "빨강", correct: "ppalgang", options: ["ppalgang", "palgang", "ppalkang", "balkang"], hint: "Red" },
+                { korean: "파랑", correct: "parang", options: ["parang", "pharang", "palang", "barang"], hint: "Blue" },
+                { korean: "노랑", correct: "norang", options: ["norang", "nolang", "nurang", "nalang"], hint: "Yellow" },
+                { korean: "초록", correct: "chorok", options: ["chorok", "cholok", "churok", "cheorok"], hint: "Green" },
+                { korean: "검정", correct: "geomjeong", options: ["geomjeong", "gumjung", "komjong", "geomjung"], hint: "Black" },
+                { korean: "하양", correct: "hayang", options: ["hayang", "hahyang", "hayahng", "hayeng"], hint: "White" },
+
+                // Family
+                { korean: "엄마", correct: "eomma", options: ["eomma", "umma", "omma", "emma"], hint: "Mom" },
+                { korean: "아빠", correct: "appa", options: ["appa", "abba", "ahppa", "apah"], hint: "Dad" },
+                { korean: "언니", correct: "eonni", options: ["eonni", "unni", "onni", "enni"], hint: "Older sister (female)" },
+                { korean: "오빠", correct: "oppa", options: ["oppa", "obba", "opah", "oppah"], hint: "Older brother (female)" },
+                { korean: "누나", correct: "nuna", options: ["nuna", "noona", "nunah", "nunna"], hint: "Older sister (male)" },
+                { korean: "형", correct: "hyeong", options: ["hyeong", "hyung", "hyong", "heong"], hint: "Older brother (male)" },
+
+                // Common words
+                { korean: "물", correct: "mul", options: ["mul", "mool", "muhl", "mel"], hint: "Water" },
+                { korean: "밥", correct: "bap", options: ["bap", "pap", "bahp", "bab"], hint: "Rice/Meal" },
+                { korean: "집", correct: "jip", options: ["jip", "chip", "jeep", "jib"], hint: "House" },
+                { korean: "사람", correct: "saram", options: ["saram", "sahram", "salahm", "sarahm"], hint: "Person" },
+                { korean: "친구", correct: "chingu", options: ["chingu", "chingoo", "chingu", "chingu"], hint: "Friend" },
+                { korean: "학교", correct: "hakgyo", options: ["hakgyo", "hakkyo", "hagkyo", "hahkgyo"], hint: "School" },
+                { korean: "사랑", correct: "sarang", options: ["sarang", "salang", "sarahng", "salahng"], hint: "Love" },
+                { korean: "맛있다", correct: "masitda", options: ["masitda", "mashitda", "masida", "matitda"], hint: "Delicious" },
+                { korean: "예쁘다", correct: "yeppeuda", options: ["yeppeuda", "yeppuda", "yepuda", "yepeuda"], hint: "Pretty" },
+                { korean: "좋아", correct: "joa", options: ["joa", "joha", "choa", "jowa"], hint: "Like/Good" }
+            ]
+        };
+
+        // ============================================
+        // TRANSLATIONS
+        // ============================================
+        const translations = {
+            en: {
+                tagline: "Master Korean Pronunciation",
+                totalScore: "Total Score",
+                bestStreak: "Best Streak",
+                gamesPlayed: "Games",
+                level: "Level",
+                selectMode: "Select Mode",
+                chooseLearning: "Choose what you want to learn",
+                consonants: "Consonants",
+                consonantsDesc: "Learn ㄱ, ㄴ, ㄷ...",
+                vowels: "Vowels",
+                vowelsDesc: "Learn ㅏ, ㅓ, ㅗ...",
+                syllables: "Syllables",
+                syllablesDesc: "Learn 가, 나, 다...",
+                words: "Words",
+                wordsDesc: "Learn basic words",
+                tutorial: "📖 Tutorial",
+                settings: "⚙️ Settings",
+                achievements: "🏆 Achievements",
+                selectDifficulty: "Select Difficulty",
+                beginner: "Beginner",
+                beginnerDesc: "Basic characters, more time",
+                intermediate: "Intermediate",
+                intermediateDesc: "More variety, standard time",
+                advanced: "Advanced",
+                advancedDesc: "All characters, fast pace",
+                back: "← Back",
+                quit: "✕ Quit",
+                score: "Score",
+                question: "Question",
+                whatSound: "What sound does this make?",
+                greatJob: "Great Job!",
+                quizComplete: "Quiz Complete!",
+                correct: "Correct",
+                accuracy: "Accuracy",
+                maxStreak: "Max Streak",
+                playAgain: "Play Again",
+                backToMenu: "Back to Menu",
+                welcomeKorean: "Welcome to Korean!",
+                tutorialIntro: "Korean uses a unique alphabet called Hangul (한글). It was scientifically designed to be easy to learn!",
+                consonantsTitle: "Consonants (자음)",
+                consonantsInfo: "Korean has 14 basic consonants. ㄱ(g), ㄴ(n), ㄷ(d) are the most common ones!",
+                vowelsTitle: "Vowels (모음)",
+                vowelsInfo: "Korean has 10 basic vowels. ㅏ(a), ㅓ(eo), ㅗ(o) are vertical and horizontal lines!",
+                syllablesTitle: "Syllable Blocks",
+                syllablesInfo: "Consonants and vowels combine to form syllable blocks. 가 = ㄱ + ㅏ (g + a = ga)!",
+                readyPlay: "Ready to Play?",
+                tutorialEnd: "Match Korean characters with their pronunciation. Earn XP, unlock achievements, and become a Korean Master!",
+                next: "Next →",
+                skip: "Skip",
+                settingsTitle: "⚙️ Settings",
+                questionsPerGame: "Questions per Game",
+                timePerQuestion: "Time per Question",
+                soundEffects: "Sound Effects",
+                showHints: "Show Hints",
+                autoPlay: "Auto-play Pronunciation",
+                saveSettings: "Save Settings",
+                cancel: "Cancel",
+                achievementsTitle: "🏆 Achievements",
+                achFirstGame: "First Game",
+                achPerfect: "Perfect 10",
+                achStreak5: "5 Streak",
+                achStreak10: "10 Streak",
+                achLevel5: "Level 5",
+                achLevel10: "Level 10",
+                achGames10: "10 Games",
+                achGames50: "50 Games",
+                achMaster: "Master",
+                correctAnswer: "Correct! 🎉",
+                wrongAnswer: "Wrong! It was: ",
+                timeUp: "Time's up! It was: ",
+                quitConfirm: "Quit the game?",
+                newAchievement: "🏆 Achievement Unlocked!"
+            },
+            ja: {
+                tagline: "韓国語の発音をマスター",
+                totalScore: "総スコア",
+                bestStreak: "最高連続",
+                gamesPlayed: "ゲーム数",
+                level: "レベル",
+                selectMode: "モード選択",
+                chooseLearning: "学びたいものを選んでください",
+                consonants: "子音",
+                consonantsDesc: "ㄱ, ㄴ, ㄷを学ぶ...",
+                vowels: "母音",
+                vowelsDesc: "ㅏ, ㅓ, ㅗを学ぶ...",
+                syllables: "音節",
+                syllablesDesc: "가, 나, 다を学ぶ...",
+                words: "単語",
+                wordsDesc: "基本単語を学ぶ",
+                tutorial: "📖 チュートリアル",
+                settings: "⚙️ 設定",
+                achievements: "🏆 実績",
+                selectDifficulty: "難易度を選択",
+                beginner: "初級",
+                beginnerDesc: "基本文字、時間に余裕",
+                intermediate: "中級",
+                intermediateDesc: "より多様、標準時間",
+                advanced: "上級",
+                advancedDesc: "全文字、速いペース",
+                back: "← 戻る",
+                quit: "✕ やめる",
+                score: "スコア",
+                question: "問題",
+                whatSound: "この音は何ですか？",
+                greatJob: "よくできました！",
+                quizComplete: "クイズ完了！",
+                correct: "正解",
+                accuracy: "正解率",
+                maxStreak: "最高連続",
+                playAgain: "もう一度",
+                backToMenu: "メニューへ",
+                welcomeKorean: "韓国語へようこそ！",
+                tutorialIntro: "韓国語はハングル（한글）という独自のアルファベットを使います。科学的に設計され、学びやすいです！",
+                consonantsTitle: "子音 (자음)",
+                consonantsInfo: "韓国語には14の基本子音があります。ㄱ(g)、ㄴ(n)、ㄷ(d)が最も一般的です！",
+                vowelsTitle: "母音 (모음)",
+                vowelsInfo: "韓国語には10の基本母音があります。ㅏ(a)、ㅓ(eo)、ㅗ(o)は縦横の線です！",
+                syllablesTitle: "音節ブロック",
+                syllablesInfo: "子音と母音が組み合わさって音節ブロックを形成します。가 = ㄱ + ㅏ (g + a = ga)！",
+                readyPlay: "準備はいいですか？",
+                tutorialEnd: "韓国語の文字と発音をマッチさせましょう。XPを獲得し、実績を解除して、韓国語マスターになろう！",
+                next: "次へ →",
+                skip: "スキップ",
+                settingsTitle: "⚙️ 設定",
+                questionsPerGame: "ゲームごとの問題数",
+                timePerQuestion: "問題ごとの時間",
+                soundEffects: "効果音",
+                showHints: "ヒントを表示",
+                autoPlay: "発音を自動再生",
+                saveSettings: "設定を保存",
+                cancel: "キャンセル",
+                achievementsTitle: "🏆 実績",
+                achFirstGame: "初ゲーム",
+                achPerfect: "パーフェクト10",
+                achStreak5: "5連続",
+                achStreak10: "10連続",
+                achLevel5: "レベル5",
+                achLevel10: "レベル10",
+                achGames10: "10ゲーム",
+                achGames50: "50ゲーム",
+                achMaster: "マスター",
+                correctAnswer: "正解！🎉",
+                wrongAnswer: "不正解！正解は：",
+                timeUp: "時間切れ！正解は：",
+                quitConfirm: "ゲームをやめますか？",
+                newAchievement: "🏆 実績解除！"
+            },
+            zh: {
+                tagline: "掌握韩语发音",
+                totalScore: "总分",
+                bestStreak: "最佳连击",
+                gamesPlayed: "游戏数",
+                level: "等级",
+                selectMode: "选择模式",
+                chooseLearning: "选择你想学习的内容",
+                consonants: "辅音",
+                consonantsDesc: "学习 ㄱ, ㄴ, ㄷ...",
+                vowels: "元音",
+                vowelsDesc: "学习 ㅏ, ㅓ, ㅗ...",
+                syllables: "音节",
+                syllablesDesc: "学习 가, 나, 다...",
+                words: "单词",
+                wordsDesc: "学习基础单词",
+                tutorial: "📖 教程",
+                settings: "⚙️ 设置",
+                achievements: "🏆 成就",
+                selectDifficulty: "选择难度",
+                beginner: "初级",
+                beginnerDesc: "基础字符，更多时间",
+                intermediate: "中级",
+                intermediateDesc: "更多变化，标准时间",
+                advanced: "高级",
+                advancedDesc: "全部字符，快节奏",
+                back: "← 返回",
+                quit: "✕ 退出",
+                score: "分数",
+                question: "问题",
+                whatSound: "这个发什么音？",
+                greatJob: "做得好！",
+                quizComplete: "测验完成！",
+                correct: "正确",
+                accuracy: "准确率",
+                maxStreak: "最高连击",
+                playAgain: "再玩一次",
+                backToMenu: "返回菜单",
+                welcomeKorean: "欢迎学习韩语！",
+                tutorialIntro: "韩语使用一种叫做韩文（한글）的独特字母表。它经过科学设计，易于学习！",
+                consonantsTitle: "辅音 (자음)",
+                consonantsInfo: "韩语有14个基本辅音。ㄱ(g)、ㄴ(n)、ㄷ(d)是最常见的！",
+                vowelsTitle: "元音 (모음)",
+                vowelsInfo: "韩语有10个基本元音。ㅏ(a)、ㅓ(eo)、ㅗ(o)是垂直和水平线！",
+                syllablesTitle: "音节块",
+                syllablesInfo: "辅音和元音组合形成音节块。가 = ㄱ + ㅏ (g + a = ga)！",
+                readyPlay: "准备好了吗？",
+                tutorialEnd: "将韩语字符与发音匹配。获得经验值，解锁成就，成为韩语大师！",
+                next: "下一步 →",
+                skip: "跳过",
+                settingsTitle: "⚙️ 设置",
+                questionsPerGame: "每局问题数",
+                timePerQuestion: "每题时间",
+                soundEffects: "音效",
+                showHints: "显示提示",
+                autoPlay: "自动播放发音",
+                saveSettings: "保存设置",
+                cancel: "取消",
+                achievementsTitle: "🏆 成就",
+                achFirstGame: "第一局",
+                achPerfect: "完美10分",
+                achStreak5: "5连击",
+                achStreak10: "10连击",
+                achLevel5: "等级5",
+                achLevel10: "等级10",
+                achGames10: "10局游戏",
+                achGames50: "50局游戏",
+                achMaster: "大师",
+                correctAnswer: "正确！🎉",
+                wrongAnswer: "错误！答案是：",
+                timeUp: "时间到！答案是：",
+                quitConfirm: "退出游戏？",
+                newAchievement: "🏆 成就解锁！"
+            }
+        };
+
+        // ============================================
+        // GAME STATE
+        // ============================================
+        let gameState = {
+            currentScreen: 'home-screen',
+            selectedMode: null,
+            selectedDifficulty: 'beginner',
+            currentQuestion: 0,
+            totalQuestions: 10,
+            timePerQuestion: 10,
+            score: 0,
+            streak: 0,
+            maxStreak: 0,
+            questions: [],
+            currentAnswer: null,
+            timerInterval: null,
+            timeLeft: 10,
+            language: 'en',
+            settings: {
+                questionsPerGame: 10,
+                timePerQuestion: 10,
+                soundEnabled: true,
+                hintsEnabled: true,
+                autoPlayEnabled: false
+            }
+        };
+
+        // Player data (saved to localStorage)
+        let playerData = {
+            totalScore: 0,
+            bestStreak: 0,
+            gamesPlayed: 0,
+            level: 1,
+            xp: 0,
+            achievements: []
+        };
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function init() {
+            loadPlayerData();
+            loadSettings();
+            updateUI();
+            setupEventListeners();
+            applyLanguage();
         }
 
-        function loadNewSyllable() {
-            // Stop adding new questions once the limit is reached
-            if (totalQuestions >= maxQuestions) {
-                clearInterval(timer);
-                document.getElementById('timer').textContent = parseInt(document.getElementById('time-setting').value) - timeRemaining + " sec";
-                document.getElementById('feedback').textContent = 'Quiz Completed! Final score: ' + score;
-                document.querySelector('.game-area').classList.remove('visible');
-                document.querySelector('.restart-button').classList.add('visible');
+        function loadPlayerData() {
+            const saved = localStorage.getItem('koreanMaster_playerData');
+            if (saved) {
+                playerData = { ...playerData, ...JSON.parse(saved) };
+            }
+        }
+
+        function savePlayerData() {
+            localStorage.setItem('koreanMaster_playerData', JSON.stringify(playerData));
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('koreanMaster_settings');
+            if (saved) {
+                gameState.settings = { ...gameState.settings, ...JSON.parse(saved) };
+            }
+            const lang = localStorage.getItem('koreanMaster_language');
+            if (lang) {
+                gameState.language = lang;
+            }
+        }
+
+        function saveSettings() {
+            localStorage.setItem('koreanMaster_settings', JSON.stringify(gameState.settings));
+
+            // Update settings UI
+            document.querySelectorAll('#questions-setting .settings-option').forEach(el => {
+                el.classList.toggle('active', el.dataset.value == gameState.settings.questionsPerGame);
+            });
+            document.querySelectorAll('#time-setting .settings-option').forEach(el => {
+                el.classList.toggle('active', el.dataset.value == gameState.settings.timePerQuestion);
+            });
+            document.getElementById('toggle-sound').classList.toggle('active', gameState.settings.soundEnabled);
+            document.getElementById('toggle-hints').classList.toggle('active', gameState.settings.hintsEnabled);
+            document.getElementById('toggle-autoplay').classList.toggle('active', gameState.settings.autoPlayEnabled);
+
+            showToast('Settings saved!', 'success');
+        }
+
+        function updateUI() {
+            document.getElementById('total-score').textContent = playerData.totalScore;
+            document.getElementById('best-streak').textContent = playerData.bestStreak;
+            document.getElementById('games-played').textContent = playerData.gamesPlayed;
+            document.getElementById('level-number').textContent = playerData.level;
+            document.getElementById('current-xp').textContent = playerData.xp;
+
+            const xpNeeded = playerData.level * 100;
+            document.getElementById('needed-xp').textContent = xpNeeded;
+            document.getElementById('xp-progress').style.width = `${(playerData.xp / xpNeeded) * 100}%`;
+
+            updateAchievements();
+            updateSettingsUI();
+        }
+
+        function updateSettingsUI() {
+            document.querySelectorAll('#questions-setting .settings-option').forEach(el => {
+                el.classList.toggle('active', el.dataset.value == gameState.settings.questionsPerGame);
+            });
+            document.querySelectorAll('#time-setting .settings-option').forEach(el => {
+                el.classList.toggle('active', el.dataset.value == gameState.settings.timePerQuestion);
+            });
+            document.getElementById('toggle-sound').classList.toggle('active', gameState.settings.soundEnabled);
+            document.getElementById('toggle-hints').classList.toggle('active', gameState.settings.hintsEnabled);
+            document.getElementById('toggle-autoplay').classList.toggle('active', gameState.settings.autoPlayEnabled);
+        }
+
+        function updateAchievements() {
+            document.querySelectorAll('.achievement').forEach(el => {
+                const achievementId = el.dataset.achievement;
+                el.classList.toggle('unlocked', playerData.achievements.includes(achievementId));
+            });
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        function setupEventListeners() {
+            // Language selector
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    gameState.language = btn.dataset.lang;
+                    localStorage.setItem('koreanMaster_language', gameState.language);
+                    applyLanguage();
+                });
+            });
+
+            // Mode selection
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    gameState.selectedMode = item.dataset.mode;
+                    showScreen('difficulty-screen');
+                });
+            });
+
+            // Difficulty selection
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    gameState.selectedDifficulty = btn.dataset.difficulty;
+                    startGame();
+                });
+            });
+
+            // Settings options
+            document.querySelectorAll('#questions-setting .settings-option').forEach(el => {
+                el.addEventListener('click', () => {
+                    document.querySelectorAll('#questions-setting .settings-option').forEach(o => o.classList.remove('active'));
+                    el.classList.add('active');
+                    gameState.settings.questionsPerGame = parseInt(el.dataset.value);
+                });
+            });
+
+            document.querySelectorAll('#time-setting .settings-option').forEach(el => {
+                el.addEventListener('click', () => {
+                    document.querySelectorAll('#time-setting .settings-option').forEach(o => o.classList.remove('active'));
+                    el.classList.add('active');
+                    gameState.settings.timePerQuestion = parseInt(el.dataset.value);
+                });
+            });
+
+            // Toggles
+            document.getElementById('toggle-sound').addEventListener('click', function() {
+                this.classList.toggle('active');
+                gameState.settings.soundEnabled = this.classList.contains('active');
+            });
+
+            document.getElementById('toggle-hints').addEventListener('click', function() {
+                this.classList.toggle('active');
+                gameState.settings.hintsEnabled = this.classList.contains('active');
+            });
+
+            document.getElementById('toggle-autoplay').addEventListener('click', function() {
+                this.classList.toggle('active');
+                gameState.settings.autoPlayEnabled = this.classList.contains('active');
+            });
+
+            // Tutorial navigation
+            let currentSlide = 0;
+            document.getElementById('tutorial-next').addEventListener('click', () => {
+                const slides = document.querySelectorAll('.tutorial-slide');
+                const dots = document.querySelectorAll('.dot');
+
+                slides[currentSlide].classList.remove('active');
+                dots[currentSlide].classList.remove('active');
+
+                currentSlide++;
+
+                if (currentSlide >= slides.length) {
+                    currentSlide = 0;
+                    showScreen('home-screen');
+                } else {
+                    slides[currentSlide].classList.add('active');
+                    dots[currentSlide].classList.add('active');
+
+                    if (currentSlide === slides.length - 1) {
+                        document.getElementById('tutorial-next').textContent = translations[gameState.language].playAgain || "Start!";
+                    }
+                }
+            });
+
+            // Set active language button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === gameState.language);
+            });
+        }
+
+        // ============================================
+        // LANGUAGE
+        // ============================================
+        function applyLanguage() {
+            const lang = translations[gameState.language] || translations.en;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (lang[key]) {
+                    el.textContent = lang[key];
+                }
+            });
+        }
+
+        function t(key) {
+            return translations[gameState.language]?.[key] || translations.en[key] || key;
+        }
+
+        // ============================================
+        // SCREEN MANAGEMENT
+        // ============================================
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            gameState.currentScreen = screenId;
+
+            // Reset tutorial when showing
+            if (screenId === 'tutorial-screen') {
+                const slides = document.querySelectorAll('.tutorial-slide');
+                const dots = document.querySelectorAll('.dot');
+                slides.forEach((s, i) => s.classList.toggle('active', i === 0));
+                dots.forEach((d, i) => d.classList.toggle('active', i === 0));
+                document.getElementById('tutorial-next').textContent = t('next');
+            }
+        }
+
+        // ============================================
+        // GAME LOGIC
+        // ============================================
+        function startGame() {
+            // Reset game state
+            gameState.currentQuestion = 0;
+            gameState.score = 0;
+            gameState.streak = 0;
+            gameState.maxStreak = 0;
+            gameState.totalQuestions = gameState.settings.questionsPerGame;
+            gameState.timePerQuestion = gameState.settings.timePerQuestion;
+
+            // Prepare questions
+            prepareQuestions();
+
+            // Show game screen
+            showScreen('game-screen');
+
+            // Load first question
+            loadQuestion();
+        }
+
+        function prepareQuestions() {
+            let dataPool = koreanData[gameState.selectedMode] || koreanData.syllables;
+
+            // Filter based on difficulty
+            if (gameState.selectedDifficulty === 'beginner') {
+                dataPool = dataPool.slice(0, Math.ceil(dataPool.length * 0.4));
+            } else if (gameState.selectedDifficulty === 'intermediate') {
+                dataPool = dataPool.slice(0, Math.ceil(dataPool.length * 0.7));
+            }
+
+            // Shuffle and pick questions
+            const shuffled = [...dataPool].sort(() => Math.random() - 0.5);
+            gameState.questions = shuffled.slice(0, gameState.totalQuestions);
+
+            // If not enough questions, repeat
+            while (gameState.questions.length < gameState.totalQuestions) {
+                gameState.questions.push(...shuffled.slice(0, gameState.totalQuestions - gameState.questions.length));
+            }
+        }
+
+        function loadQuestion() {
+            if (gameState.currentQuestion >= gameState.totalQuestions) {
+                endGame();
                 return;
             }
 
-            const selectedSyllable = getRandomSyllable();
-            document.getElementById('korean-syllable').textContent = selectedSyllable.korean;
+            const question = gameState.questions[gameState.currentQuestion];
+            gameState.currentAnswer = question.correct;
 
-            const optionsDivs = document.querySelectorAll('.option');
-            optionsDivs.forEach((div, index) => {
-                div.textContent = selectedSyllable.options[index];
-                div.onclick = () => checkAnswer(selectedSyllable.options[index]);
-            });
+            // Update display
+            document.getElementById('korean-display').textContent = question.korean;
+            document.getElementById('game-question').textContent = `${gameState.currentQuestion + 1}/${gameState.totalQuestions}`;
+            document.getElementById('game-score').textContent = gameState.score;
 
-
-            totalQuestions++;
-            // Display the total number of questions instead of the current count
-            document.getElementById('total-questions').textContent = maxQuestions;
-            document.getElementById('feedback').textContent = 'Select the correct pronunciation.';
-        }
-
-        function checkAnswer(selectedOption) {
-            const currentSyllable = document.getElementById('korean-syllable').textContent;
-            const correctAnswer = syllables.find(syllable => syllable.korean === currentSyllable).correct;
-
-            if (selectedOption === correctAnswer) {
-                score++;
-                document.getElementById('feedback').textContent = `Correct!`;
+            // Show hint
+            if (gameState.settings.hintsEnabled && question.hint) {
+                document.getElementById('hint-text').textContent = question.hint;
             } else {
-                document.getElementById('feedback').textContent = `Wrong! The correct answer was ${correctAnswer}.`;
+                document.getElementById('hint-text').textContent = '';
             }
 
-            document.getElementById('correct-answers').textContent = score;
+            // Shuffle options
+            const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
 
-            setTimeout(loadNewSyllable, 1000);
-        }
+            // Update option buttons
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
 
-        function startTimer() {
-            timer = setInterval(() => {
-                if (timeRemaining > 0) {
-                    timeRemaining--;
-                    document.getElementById('timer').textContent = `Time: ${timeRemaining}`;
-                } else {
-                    clearInterval(timer);
-                    document.getElementById('feedback').textContent = 'Time is up! Final score: ' + score;
-                    document.querySelector('.game-area').classList.remove('visible');
-                    document.querySelector('.restart-button').classList.add('visible');
-                }
-            }, 1000);
-        }
+            shuffledOptions.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                container.appendChild(btn);
+            });
 
-        function startGame() {
-            score = 0;
-            totalQuestions = 0;
-            timeRemaining = parseInt(document.getElementById('time-setting').value);
-            maxQuestions = parseInt(document.getElementById('total-questions-setting').value);
+            // Clear feedback
+            document.getElementById('feedback-container').className = 'feedback-container';
+            document.getElementById('feedback-text').textContent = '';
 
-            // Display the total number of questions based on user input
-            document.getElementById('total-questions').textContent = maxQuestions;
-            document.getElementById('correct-answers').textContent = score;
-            document.getElementById('feedback').textContent = 'Select the correct pronunciation.';
-            document.getElementById('timer').textContent = `Time: ${timeRemaining}`;
+            // Update combo display
+            updateComboDisplay();
 
-            document.querySelector('.start-button').style.display = 'none';
-            document.querySelector('.restart-button').classList.remove('visible');
-            document.querySelector('.settings').style.display = 'none';
-            document.querySelector('.scoreboard').classList.add('visible');
-            document.querySelector('.feedback').classList.add('visible');
-            document.querySelector('.game-area').classList.add('visible');
+            // Auto-play sound
+            if (gameState.settings.autoPlayEnabled) {
+                setTimeout(() => playSound(), 300);
+            }
 
-            loadNewSyllable();
+            // Start timer
             startTimer();
         }
 
-        function restartGame() {
-            document.querySelector('.start-button').style.display = 'block';
-            document.querySelector('.settings').style.display = 'block';
-            document.querySelector('.restart-button').classList.remove('visible');
-            document.querySelector('.scoreboard').classList.remove('visible');
-            document.querySelector('.feedback').classList.remove('visible');
-            document.querySelector('.game-area').classList.remove('visible');
-            document.getElementById('feedback').textContent = '';
-            document.getElementById('timer').textContent = 'Time: 30';
-            document.getElementById('total-questions').textContent = '0';
-            document.getElementById('correct-answers').textContent = '0';
+        function checkAnswer(selected) {
+            clearInterval(gameState.timerInterval);
+
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === gameState.currentAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selected) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            const isCorrect = selected === gameState.currentAnswer;
+
+            if (isCorrect) {
+                gameState.score++;
+                gameState.streak++;
+                if (gameState.streak > gameState.maxStreak) {
+                    gameState.maxStreak = gameState.streak;
+                }
+
+                document.getElementById('feedback-container').className = 'feedback-container feedback-correct';
+                document.getElementById('feedback-text').textContent = t('correctAnswer');
+
+                if (gameState.settings.soundEnabled) {
+                    playCorrectSound();
+                }
+
+                createParticles();
+            } else {
+                gameState.streak = 0;
+
+                document.getElementById('feedback-container').className = 'feedback-container feedback-wrong';
+                document.getElementById('feedback-text').textContent = t('wrongAnswer') + gameState.currentAnswer;
+
+                if (gameState.settings.soundEnabled) {
+                    playWrongSound();
+                }
+            }
+
+            updateComboDisplay();
+
+            // Next question after delay
+            setTimeout(() => {
+                gameState.currentQuestion++;
+                loadQuestion();
+            }, 1500);
         }
 
-        window.onload = () => {
-            document.querySelector('.game-area').classList.remove('visible');
-        };
+        function startTimer() {
+            if (gameState.timePerQuestion === 0) {
+                document.getElementById('timer-fill').style.width = '100%';
+                return;
+            }
+
+            gameState.timeLeft = gameState.timePerQuestion;
+            document.getElementById('timer-fill').style.width = '100%';
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft -= 0.1;
+                const percentage = (gameState.timeLeft / gameState.timePerQuestion) * 100;
+                document.getElementById('timer-fill').style.width = `${percentage}%`;
+
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    timeUp();
+                }
+            }, 100);
+        }
+
+        function timeUp() {
+            gameState.streak = 0;
+
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === gameState.currentAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            document.getElementById('feedback-container').className = 'feedback-container feedback-wrong';
+            document.getElementById('feedback-text').textContent = t('timeUp') + gameState.currentAnswer;
+
+            updateComboDisplay();
+
+            setTimeout(() => {
+                gameState.currentQuestion++;
+                loadQuestion();
+            }, 1500);
+        }
+
+        function updateComboDisplay() {
+            const comboEl = document.getElementById('combo-display');
+            if (gameState.streak >= 2) {
+                comboEl.textContent = `🔥 ${gameState.streak}x Combo!`;
+                comboEl.style.display = 'inline-block';
+            } else {
+                comboEl.style.display = 'none';
+            }
+        }
+
+        function endGame() {
+            clearInterval(gameState.timerInterval);
+
+            // Calculate XP
+            const baseXP = gameState.score * 10;
+            const streakBonus = gameState.maxStreak * 5;
+            const accuracyBonus = Math.round((gameState.score / gameState.totalQuestions) * 50);
+            const totalXP = baseXP + streakBonus + accuracyBonus;
+
+            // Update player data
+            playerData.totalScore += gameState.score;
+            playerData.gamesPlayed++;
+            if (gameState.maxStreak > playerData.bestStreak) {
+                playerData.bestStreak = gameState.maxStreak;
+            }
+
+            // Add XP and check level up
+            addXP(totalXP);
+
+            // Check achievements
+            checkAchievements();
+
+            // Save data
+            savePlayerData();
+
+            // Update results screen
+            const accuracy = Math.round((gameState.score / gameState.totalQuestions) * 100);
+            document.getElementById('result-score').textContent = gameState.score;
+            document.getElementById('result-accuracy').textContent = accuracy + '%';
+            document.getElementById('result-streak').textContent = gameState.maxStreak;
+            document.getElementById('xp-earned').textContent = `+${totalXP} XP`;
+
+            // Set result icon and message based on performance
+            if (accuracy >= 90) {
+                document.getElementById('results-icon').textContent = '🏆';
+                document.getElementById('results-title').textContent = 'Perfect!';
+            } else if (accuracy >= 70) {
+                document.getElementById('results-icon').textContent = '🎉';
+                document.getElementById('results-title').textContent = t('greatJob');
+            } else if (accuracy >= 50) {
+                document.getElementById('results-icon').textContent = '👍';
+                document.getElementById('results-title').textContent = 'Good Try!';
+            } else {
+                document.getElementById('results-icon').textContent = '💪';
+                document.getElementById('results-title').textContent = 'Keep Practicing!';
+            }
+
+            showScreen('results-screen');
+            updateUI();
+        }
+
+        function addXP(amount) {
+            playerData.xp += amount;
+            const xpNeeded = playerData.level * 100;
+
+            while (playerData.xp >= xpNeeded) {
+                playerData.xp -= xpNeeded;
+                playerData.level++;
+                showToast(`🎉 Level Up! Level ${playerData.level}`, 'achievement');
+            }
+        }
+
+        function checkAchievements() {
+            const newAchievements = [];
+
+            if (playerData.gamesPlayed >= 1 && !playerData.achievements.includes('first-game')) {
+                newAchievements.push('first-game');
+            }
+            if (gameState.score === 10 && gameState.totalQuestions === 10 && !playerData.achievements.includes('perfect-10')) {
+                newAchievements.push('perfect-10');
+            }
+            if (gameState.maxStreak >= 5 && !playerData.achievements.includes('streak-5')) {
+                newAchievements.push('streak-5');
+            }
+            if (gameState.maxStreak >= 10 && !playerData.achievements.includes('streak-10')) {
+                newAchievements.push('streak-10');
+            }
+            if (playerData.level >= 5 && !playerData.achievements.includes('level-5')) {
+                newAchievements.push('level-5');
+            }
+            if (playerData.level >= 10 && !playerData.achievements.includes('level-10')) {
+                newAchievements.push('level-10');
+            }
+            if (playerData.gamesPlayed >= 10 && !playerData.achievements.includes('games-10')) {
+                newAchievements.push('games-10');
+            }
+            if (playerData.gamesPlayed >= 50 && !playerData.achievements.includes('games-50')) {
+                newAchievements.push('games-50');
+            }
+            if (playerData.level >= 20 && playerData.bestStreak >= 15 && !playerData.achievements.includes('master')) {
+                newAchievements.push('master');
+            }
+
+            newAchievements.forEach(achievement => {
+                playerData.achievements.push(achievement);
+                setTimeout(() => showToast(t('newAchievement'), 'achievement'), 1000);
+            });
+        }
+
+        function playAgain() {
+            showScreen('difficulty-screen');
+        }
+
+        function confirmQuit() {
+            if (confirm(t('quitConfirm'))) {
+                clearInterval(gameState.timerInterval);
+                showScreen('home-screen');
+            }
+        }
+
+        // ============================================
+        // AUDIO
+        // ============================================
+        function playSound() {
+            const korean = document.getElementById('korean-display').textContent;
+
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(korean);
+                utterance.lang = 'ko-KR';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function playCorrectSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.4);
+            } catch (e) {}
+        }
+
+        function playWrongSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (e) {}
+        }
+
+        // ============================================
+        // VISUAL EFFECTS
+        // ============================================
+        function createParticles() {
+            const colors = ['#22c55e', '#f59e0b', '#6366f1', '#ec4899', '#14b8a6'];
+
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.innerHTML = ['✨', '⭐', '🎉', '💫'][Math.floor(Math.random() * 4)];
+                particle.style.left = `${50 + (Math.random() - 0.5) * 40}%`;
+                particle.style.top = '40%';
+                particle.style.fontSize = `${Math.random() * 20 + 15}px`;
+                particle.style.setProperty('--tx', `${(Math.random() - 0.5) * 200}px`);
+                particle.style.setProperty('--ty', `${-Math.random() * 200 - 50}px`);
+
+                document.body.appendChild(particle);
+
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function showToast(message, type = '') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-
 </html>
